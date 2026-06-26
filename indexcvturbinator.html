@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV Optimizer — Otimizado para IA de Recrutamento</title>
+<meta name="description" content="Otimize seu currículo para sistemas ATS como GUPY, Kenoby e LinkedIn usando inteligência artificial.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f8f8f6;
+  --surface: #ffffff;
+  --surface-alt: #f3f3f0;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.14);
+  --text: #1a1a18;
+  --text-muted: #888780;
+  --text-secondary: #5a5a56;
+  --accent: #185FA5;
+  --accent-light: #E6F1FB;
+  --accent-hover: #378ADD;
+  --success: #0F6E56;
+  --success-bg: #E1F5EE;
+  --warning-bg: #FAEEDA;
+  --warning-border: #EF9F27;
+  --radius: 8px;
+  --font: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1a18;
+    --surface: #242422;
+    --surface-alt: #2c2c2a;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.14);
+    --text: #f0efea;
+    --text-muted: #5f5e5a;
+    --text-secondary: #a0a09a;
+    --accent: #378ADD;
+    --accent-light: #042C53;
+    --accent-hover: #85B7EB;
+    --success: #1D9E75;
+    --success-bg: #04342C;
+    --warning-bg: #412402;
+    --warning-border: #BA7517;
+  }
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ── Header ── */
+header {
+  background: var(--surface);
+  border-bottom: 0.5px solid var(--border);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.logo-icon {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.logo-icon svg { width: 20px; height: 20px; color: #fff; }
+.logo-text { font-size: 16px; font-weight: 600; }
+.logo-sub { font-size: 12px; color: var(--text-muted); }
+.api-badge {
+  margin-left: auto;
+  padding: 4px 10px;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+/* ── Layout ── */
+main {
+  max-width: 680px;
+  margin: 2rem auto;
+  padding: 0 1rem 4rem;
+}
+
+.step-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 2rem;
+}
+.step {
+  flex: 1; height: 3px; border-radius: 2px;
+  background: var(--border-strong);
+  transition: background 0.4s;
+}
+.step.done { background: var(--accent); }
+.step.active { background: var(--accent-hover); }
+
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: .875rem;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--surface-alt);
+  border-radius: 8px;
+  padding: 3px;
+  margin-bottom: 1rem;
+}
+.tab {
+  flex: 1; padding: .4rem;
+  font-size: 13px; font-family: var(--font);
+  border: none; background: transparent;
+  border-radius: 6px; cursor: pointer;
+  color: var(--text-secondary);
+  transition: all .2s;
+}
+.tab.active {
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+
+/* ── Upload ── */
+.upload-zone {
+  border: 1.5px dashed var(--border-strong);
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+}
+.upload-zone:hover, .upload-zone.drag {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.upload-zone input {
+  position: absolute; inset: 0;
+  opacity: 0; cursor: pointer;
+  width: 100%; height: 100%;
+}
+.upload-icon { font-size: 28px; color: var(--text-muted); margin-bottom: .5rem; }
+.upload-title { font-size: 14px; font-weight: 500; margin-bottom: .25rem; }
+.upload-sub { font-size: 12px; color: var(--text-muted); }
+
+.file-done {
+  display: flex; align-items: center; gap: 10px;
+  padding: .75rem 1rem;
+  background: var(--success-bg);
+  border: 0.5px solid var(--success);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--success);
+  margin-top: .75rem;
+}
+
+/* ── Inputs ── */
+.url-input, textarea {
+  width: 100%;
+  padding: .625rem .875rem;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: var(--font);
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+  transition: border-color .2s;
+}
+.url-input:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(55,138,221,.12);
+}
+.url-input::placeholder, textarea::placeholder { color: var(--text-muted); }
+textarea {
+  font-family: var(--mono);
+  font-size: 13px;
+  resize: vertical;
+  line-height: 1.6;
+  min-height: 180px;
+}
+textarea.short { min-height: 100px; }
+
+/* ── API Key ── */
+.api-key-wrap {
+  position: relative;
+}
+.api-key-wrap input {
+  width: 100%;
+  padding: .625rem 2.5rem .625rem .875rem;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: var(--mono);
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+  transition: border-color .2s;
+  letter-spacing: .05em;
+}
+.api-key-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(55,138,221,.12); }
+.toggle-pw {
+  position: absolute; right: 10px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: var(--text-muted); padding: 4px;
+  display: flex; align-items: center;
+}
+.api-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: .5rem;
+  line-height: 1.5;
+}
+.api-note a { color: var(--accent); text-decoration: none; }
+.api-note a:hover { text-decoration: underline; }
+
+/* ── Tip ── */
+.tip {
+  background: var(--warning-bg);
+  border-left: 3px solid var(--warning-border);
+  border-radius: 0 6px 6px 0;
+  padding: .625rem .875rem;
+  font-size: 13px;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+/* ── Buttons ── */
+.btn-primary {
+  width: 100%;
+  padding: .75rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 500;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(24,95,165,.25); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-secondary {
+  width: 100%;
+  padding: .625rem;
+  background: transparent;
+  color: var(--text);
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn-secondary:hover { background: var(--surface-alt); }
+
+/* ── Loading ── */
+#view-loading {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+.spinner {
+  width: 48px; height: 48px;
+  border: 3px solid var(--border-strong);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  margin: 0 auto 1.5rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-title { font-size: 16px; font-weight: 500; margin-bottom: .5rem; }
+.loading-sub { font-size: 13px; color: var(--text-muted); }
+.loading-steps { margin-top: 2rem; display: flex; flex-direction: column; gap: 8px; }
+.load-step {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--text-muted);
+  opacity: 0; transform: translateX(-8px);
+  transition: all .4s;
+}
+.load-step.visible { opacity: 1; transform: translateX(0); }
+.load-step.done { color: var(--success); }
+.step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); flex-shrink: 0; }
+.load-step.done .step-dot { background: var(--success); }
+.load-step.visible:not(.done) .step-dot { background: var(--accent); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ── Results ── */
+.scores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.25rem; }
+.score-card {
+  background: var(--surface-alt);
+  border-radius: 8px;
+  padding: .875rem;
+}
+.score-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+.score-num { font-size: 26px; font-weight: 600; }
+.score-bar-wrap { background: var(--border-strong); border-radius: 4px; height: 6px; overflow: hidden; margin-top: 8px; }
+.score-bar { height: 100%; border-radius: 4px; background: var(--accent); transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+.kw-found-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+.keywords-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.keyword-tag {
+  padding: 4px 10px;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.result-section { margin-bottom: 1.25rem; }
+.result-title {
+  font-size: 12px; font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: .5rem;
+  display: flex; align-items: center; gap: 6px;
+}
+.result-box {
+  background: var(--surface-alt);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 14px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.export-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1rem; }
+.export-btn {
+  padding: .75rem;
+  background: var(--surface-alt);
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  color: var(--text);
+  text-decoration: none;
+}
+.export-btn:hover { background: var(--border-strong); transform: translateY(-1px); }
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--text);
+  color: var(--bg);
+  padding: .625rem 1.25rem;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 100;
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── Misc ── */
+.hidden { display: none !important; }
+.icon { display: inline-flex; align-items: center; }
+
+svg { display: inline-block; vertical-align: middle; }
+
+@media (max-width: 480px) {
+  .scores-grid { grid-template-columns: 1fr; }
+  .export-btns { grid-template-columns: 1fr; }
+  header { padding: .875rem 1rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/>
+      <line x1="16" y1="17" x2="8" y2="17"/>
+      <polyline points="10 9 9 9 8 9"/>
+    </svg>
+  </div>
+  <div>
+    <div class="logo-text">CV Optimizer</div>
+    <div class="logo-sub">Otimizado para IA de recrutamento</div>
+  </div>
+  <div class="api-badge">
+    <div class="dot"></div>
+    Powered by Claude
+  </div>
+</header>
+
+<main>
+  <div class="step-bar">
+    <div class="step active" id="s1"></div>
+    <div class="step" id="s2"></div>
+    <div class="step" id="s3"></div>
+  </div>
+
+  <!-- UPLOAD VIEW -->
+  <div id="view-upload">
+
+    <!-- API Key -->
+    <div class="card">
+      <div class="section-label">Chave de API Anthropic</div>
+      <div class="api-key-wrap">
+        <input type="password" id="api-key" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
+        <button class="toggle-pw" onclick="togglePw()" aria-label="Mostrar/ocultar chave">
+          <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+      <p class="api-note">
+        Sua chave é usada diretamente no navegador e nunca é armazenada. 
+        Obtenha a sua em <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>.
+      </p>
+    </div>
+
+    <!-- CV -->
+    <div class="card">
+      <div class="section-label">Passo 1 — Seu CV atual</div>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('paste', this)">Colar texto</button>
+        <button class="tab" onclick="switchTab('upload', this)">Upload de arquivo</button>
+      </div>
+      <div id="tab-paste">
+        <textarea id="cv-text-input" placeholder="Cole aqui o conteúdo completo do seu CV...&#10;&#10;Nome, contato, resumo profissional, experiências, habilidades, formação..."></textarea>
+      </div>
+      <div id="tab-upload" class="hidden">
+        <div class="upload-zone" id="drop-zone"
+          ondragover="ev.preventDefault();this.classList.add('drag')"
+          ondragleave="this.classList.remove('drag')"
+          ondrop="handleDrop(event)">
+          <input type="file" id="cv-file" accept=".txt,.pdf,.doc,.docx" onchange="handleFile(this)">
+          <div class="upload-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="upload-title">Arraste seu CV ou clique para selecionar</div>
+          <div class="upload-sub">Suporte a .txt (recomendado), .pdf, .doc, .docx</div>
+        </div>
+        <div id="file-status"></div>
+      </div>
+    </div>
+
+    <!-- Vaga -->
+    <div class="card">
+      <div class="section-label">Passo 2 — Vaga de interesse</div>
+      <input class="url-input" id="job-url" type="url" placeholder="https://portal.gupy.io/job/... (opcional se colar a descrição abaixo)" style="margin-bottom:.75rem">
+      <textarea id="job-desc" class="short" placeholder="Cole aqui a descrição completa da vaga (requisitos, responsabilidades, diferenciais)..."></textarea>
+    </div>
+
+    <div class="tip">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>Quanto mais completo o CV e a descrição da vaga, mais precisa é a otimização para sistemas como <strong>GUPY</strong>, Kenoby e LinkedIn Recruiter.</span>
+    </div>
+
+    <button class="btn-primary" id="btn-optimize" onclick="startOptimize()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Otimizar CV com IA
+    </button>
+  </div>
+
+  <!-- LOADING VIEW -->
+  <div id="view-loading" class="hidden">
+    <div class="spinner"></div>
+    <div class="loading-title" id="loading-text">Analisando a vaga...</div>
+    <div class="loading-sub" id="loading-sub">Isso pode levar alguns segundos</div>
+    <div class="loading-steps">
+      <div class="load-step" id="ls1"><div class="step-dot"></div> Lendo requisitos e palavras-chave da vaga</div>
+      <div class="load-step" id="ls2"><div class="step-dot"></div> Comparando com seu CV atual</div>
+      <div class="load-step" id="ls3"><div class="step-dot"></div> Reescrevendo experiências com métricas</div>
+      <div class="load-step" id="ls4"><div class="step-dot"></div> Otimizando para indexação ATS / GUPY</div>
+    </div>
+  </div>
+
+  <!-- RESULT VIEW -->
+  <div id="view-result" class="hidden">
+
+    <div class="card">
+      <div class="section-label">Análise de compatibilidade</div>
+      <div class="scores-grid">
+        <div class="score-card">
+          <div class="score-label">Score com a vaga</div>
+          <div class="score-num" id="score-val">—</div>
+          <div class="score-bar-wrap"><div class="score-bar" id="score-bar" style="width:0%"></div></div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">Keywords encontradas</div>
+          <div class="score-num" id="kw-found-val">—</div>
+          <div class="kw-found-label" id="kw-found-label">de — termos-chave da vaga</div>
+        </div>
+      </div>
+      <div class="result-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        Palavras-chave prioritárias para indexação ATS
+      </div>
+      <div class="keywords-grid" id="keywords-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">CV otimizado</div>
+
+      <div class="result-section">
+        <div class="result-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Resumo profissional (ATS-friendly)
+        </div>
+        <div class="result-box" id="res-summary"></div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Experiências reescritas com verbos de ação e métricas
+        </div>
+        <div class="result-box" id="res-exp"></div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          Habilidades otimizadas para a vaga
+        </div>
+        <div class="result-box" id="res-skills"></div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-title" style="color:#BA7517">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#BA7517" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          O que adicionar para aumentar seu score
+        </div>
+        <div class="result-box" id="res-gaps"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Exportar CV otimizado</div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:.75rem">Copie o texto ou baixe o arquivo e cole em seu editor de preferência (Word, Google Docs) para formatar antes de enviar.</p>
+      <div class="export-btns">
+        <button class="export-btn" onclick="exportCopy()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copiar texto
+        </button>
+        <button class="export-btn" onclick="exportDownload()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Baixar .txt
+        </button>
+      </div>
+    </div>
+
+    <button class="btn-secondary" onclick="reset()" style="margin-top:.5rem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Otimizar outro CV
+    </button>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let cvContent = '';
+let optimizedData = null;
+let activeTab = 'paste';
+
+/* ── Tabs ── */
+function switchTab(tab, btn) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-paste').classList.toggle('hidden', tab !== 'paste');
+  document.getElementById('tab-upload').classList.toggle('hidden', tab !== 'upload');
+}
+
+/* ── File handling ── */
+function handleFile(input) {
+  const file = input.files[0];
+  if (file) processFile(file);
+}
+function handleDrop(ev) {
+  ev.preventDefault();
+  document.getElementById('drop-zone').classList.remove('drag');
+  const file = ev.dataTransfer.files[0];
+  if (file) processFile(file);
+}
+function processFile(file) {
+  const status = document.getElementById('file-status');
+  if (file.name.endsWith('.txt')) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      cvContent = e.target.result;
+      status.innerHTML = `<div class="file-done"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> ${file.name} carregado (${Math.round(file.size/1024)}KB)</div>`;
+    };
+    reader.readAsText(file);
+  } else {
+    cvContent = `[Arquivo: ${file.name} — Cole a descrição do CV no campo de texto para melhor resultado]`;
+    status.innerHTML = `<div class="file-done"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> ${file.name} selecionado</div>`;
+  }
+}
+
+/* ── Toggle password ── */
+function togglePw() {
+  const inp = document.getElementById('api-key');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+/* ── Steps ── */
+function setStep(n) {
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById('s' + i);
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  }
+}
+
+/* ── Loading animation ── */
+const loadSteps = [
+  [1000, 'ls1'], [2500, 'ls2'], [5000, 'ls3'], [8000, 'ls4']
+];
+let loadTimers = [];
+function startLoadingAnim() {
+  loadTimers.forEach(clearTimeout);
+  loadTimers = [];
+  ['ls1','ls2','ls3','ls4'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('visible','done');
+  });
+  loadSteps.forEach(([delay, id]) => {
+    loadTimers.push(setTimeout(() => {
+      document.getElementById(id).classList.add('visible');
+    }, delay));
+  });
+}
+function finishLoadingAnim() {
+  ['ls1','ls2','ls3','ls4'].forEach(id => {
+    document.getElementById(id).classList.add('visible','done');
+  });
+}
+
+/* ── Main optimize ── */
+async function startOptimize() {
+  const apiKey = document.getElementById('api-key').value.trim();
+  const urlVal = document.getElementById('job-url').value.trim();
+  const descVal = document.getElementById('job-desc').value.trim();
+  const textVal = document.getElementById('cv-text-input').value.trim();
+
+  if (activeTab === 'paste') cvContent = textVal;
+
+  if (!apiKey) { showToast('Informe sua chave de API Anthropic.'); return; }
+  if (!cvContent && !textVal) { showToast('Cole seu CV ou faça upload de um arquivo.'); return; }
+  if (!urlVal && !descVal) { showToast('Informe o link ou cole a descrição da vaga.'); return; }
+
+  if (activeTab === 'paste') cvContent = textVal;
+  const jobContent = urlVal
+    ? `URL da vaga: ${urlVal}\n\n${descVal}`
+    : descVal;
+
+  setStep(2);
+  document.getElementById('view-upload').classList.add('hidden');
+  document.getElementById('view-loading').classList.remove('hidden');
+  startLoadingAnim();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 3000,
+        messages: [{ role: 'user', content: buildPrompt(cvContent, jobContent) }]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    const text = data.content.map(c => c.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    const start = clean.indexOf('{');
+    const end = clean.lastIndexOf('}');
+    optimizedData = JSON.parse(clean.slice(start, end + 1));
+
+    finishLoadingAnim();
+    await sleep(600);
+    document.getElementById('view-loading').classList.add('hidden');
+    showResult(optimizedData);
+
+  } catch (e) {
+    loadTimers.forEach(clearTimeout);
+    document.getElementById('view-loading').classList.add('hidden');
+    document.getElementById('view-upload').classList.remove('hidden');
+    showToast('Erro: ' + (e.message || 'Tente novamente.'));
+    setStep(1);
+  }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+/* ── Prompt ── */
+function buildPrompt(cv, job) {
+  return `Você é um especialista em recrutamento e otimização de currículos para sistemas ATS (Applicant Tracking Systems) como GUPY, Kenoby, Workday e LinkedIn Recruiter.
+
+Analise o CV e a vaga fornecidos e retorne APENAS um JSON válido, sem texto antes ou depois, com esta estrutura exata:
+
+{
+  "score": <número 0-100 de compatibilidade atual do CV com a vaga>,
+  "keywords_total": <total de palavras-chave relevantes identificadas na vaga>,
+  "keywords_found": <quantas dessas o candidato já demonstra no CV>,
+  "keywords": ["lista","de","até 15","palavras-chave","da","vaga","que","o","ATS","vai","buscar"],
+  "summary": "Resumo profissional otimizado de 4-5 linhas. Use palavras-chave exatas da vaga de forma natural. Escreva na terceira pessoa. Mencione anos de experiência, área de especialização e impacto mensurável. Inclua as principais competências técnicas alinhadas à vaga.",
+  "experiences": "Reescreva as 2-3 experiências mais relevantes com verbos de ação fortes no passado (liderou, implementou, reduziu, aumentou, desenvolveu, automatizou). Adicione métricas estimadas quando possível (ex: 'Reduziu tempo de entrega em ~30%', 'Gerenciou equipe de X pessoas'). Use bullet points com • e alinhe com os requisitos da vaga. Máximo 600 caracteres por bloco.",
+  "skills": "Liste as habilidades técnicas e comportamentais priorizadas para esta vaga. Organize em categorias. Use os nomes exatos que a vaga usa (ex: se a vaga diz 'Power BI', não escreva 'PowerBI'). Formato: Categoria: item1, item2, item3. Máximo 300 caracteres.",
+  "gaps": "Liste de 4 a 6 lacunas específicas com sugestões acionáveis: o que está faltando no CV vs o que a vaga pede. Seja objetivo. Use bullet points com •. Inclua sugestão de certificação ou curso gratuito quando relevante (ex: Google, Coursera, SENAI). Máximo 500 caracteres."
+}
+
+CV DO CANDIDATO:
+${cv.slice(0, 3500)}
+
+VAGA / EMPRESA:
+${job.slice(0, 2500)}
+
+Regras ATS obrigatórias aplicadas na reescrita:
+1. Keywords exatas da vaga (nunca sinônimos — ATS faz match literal)
+2. Siglas com extensão: "IA (Inteligência Artificial)", "KPI (Key Performance Indicator)"
+3. Verbos de ação fortes no início de cada bullet: liderou, implementou, reduziu, criou, gerenciou
+4. Métricas numéricas aumentam score: %, R$, quantidade, tempo
+5. Sem tabelas, colunas, gráficos ou ícones no texto (ATS não lê)
+6. Formato linear, apenas texto e bullet points simples
+7. Nome e contato no topo, seguido de resumo, depois experiências, habilidades, formação
+
+Retorne SOMENTE o JSON. Sem preamble, sem explicações, sem markdown.`;
+}
+
+/* ── Show results ── */
+function showResult(d) {
+  setStep(3);
+  const score = Math.min(100, Math.max(0, d.score || 60));
+  document.getElementById('score-val').textContent = score + '%';
+  setTimeout(() => { document.getElementById('score-bar').style.width = score + '%'; }, 200);
+
+  document.getElementById('kw-found-val').textContent = (d.keywords_found || 0) + '/' + (d.keywords_total || 0);
+  document.getElementById('kw-found-label').textContent = `de ${d.keywords_total || 0} termos-chave da vaga`;
+
+  const grid = document.getElementById('keywords-grid');
+  grid.innerHTML = '';
+  (d.keywords || []).forEach(k => {
+    const tag = document.createElement('span');
+    tag.className = 'keyword-tag';
+    tag.textContent = k;
+    grid.appendChild(tag);
+  });
+
+  document.getElementById('res-summary').textContent = d.summary || '';
+  document.getElementById('res-exp').textContent = d.experiences || '';
+  document.getElementById('res-skills').textContent = d.skills || '';
+  document.getElementById('res-gaps').textContent = d.gaps || '';
+
+  document.getElementById('view-result').classList.remove('hidden');
+}
+
+/* ── Export ── */
+function buildExportText() {
+  const d = optimizedData;
+  return [
+    'CV OTIMIZADO — CV Optimizer IA',
+    '='.repeat(52),
+    '',
+    'RESUMO PROFISSIONAL',
+    d.summary || '',
+    '',
+    '='.repeat(52),
+    'EXPERIÊNCIAS PROFISSIONAIS',
+    d.experiences || '',
+    '',
+    '='.repeat(52),
+    'HABILIDADES',
+    d.skills || '',
+    '',
+    '='.repeat(52),
+    'PALAVRAS-CHAVE ATS (inclua estas no seu CV final)',
+    (d.keywords || []).join(', '),
+    '',
+    '='.repeat(52),
+    'O QUE ADICIONAR / AJUSTAR',
+    d.gaps || '',
+    '',
+    '='.repeat(52),
+    `Score de compatibilidade: ${d.score || 0}%`,
+    `Keywords encontradas: ${d.keywords_found || 0}/${d.keywords_total || 0}`,
+    '',
+    'Gerado por CV Optimizer — cvoptimizer.vercel.app',
+  ].join('\n');
+}
+
+function exportCopy() {
+  if (!optimizedData) return;
+  navigator.clipboard.writeText(buildExportText())
+    .then(() => showToast('CV copiado para a área de transferência!'))
+    .catch(() => showToast('Erro ao copiar. Tente selecionar o texto manualmente.'));
+}
+
+function exportDownload() {
+  if (!optimizedData) return;
+  const blob = new Blob([buildExportText()], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'cv-otimizado.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast('Download iniciado!');
+}
+
+/* ── Toast ── */
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+/* ── Reset ── */
+function reset() {
+  document.getElementById('view-result').classList.add('hidden');
+  document.getElementById('view-upload').classList.remove('hidden');
+  document.getElementById('cv-text-input').value = '';
+  document.getElementById('job-url').value = '';
+  document.getElementById('job-desc').value = '';
+  document.getElementById('file-status').innerHTML = '';
+  cvContent = '';
+  optimizedData = null;
+  setStep(1);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
